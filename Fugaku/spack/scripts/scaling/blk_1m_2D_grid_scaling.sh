@@ -1,18 +1,20 @@
 #!/bin/sh
 
-#for N in 1 4 16 256 1024
-for N in 4 256 1024 
+export WORK_LOCATION=/vol0004/ra000005/data/u15386
+JOBSCRIPT=$WORK_LOCATION/scripts/blk_1m_moist_thermal.sh
+
+for N in 4 9 16 36 64 144
 do
    # Determine the resource group based on node count
    if [ $N -gt 384 ]; then
-      GROUP="large"
+      GROUP="spot-large"
    else
-      GROUP="small"
+      GROUP="small-s1"
    fi
 
 
    # Create the directory first
-   RUN_DIR="/vol0001/hp250099/u14261/output/output_mt_blk_1m_2D_grid_scaling_Nnode_$N"
+   RUN_DIR="$WORK_LOCATION/output/blk_1m_2D_grid_scaling"
    mkdir -p "$RUN_DIR"
 
    SQRTN=$(echo "sqrt($N)" | bc)
@@ -30,5 +32,5 @@ do
 	 -L "rscgrp=$GROUP" \
 	 -D "$RUN_DIR" \
          -o "$RUN_DIR/%j.out" \
-	 moist_thermal_blk_1m_spack.sh
+	 "$JOBSCRIPT"
 done
